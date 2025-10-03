@@ -1,0 +1,16 @@
+{
+  "install_prerequisites": true,
+  "install_docker_engine": true,
+  "install_docker_compose": true,
+  "install_additional_tools": true,
+  "setup_service": true,
+  "add_user_to_group": true,
+  "verify_installation": true,
+  "password_file_path": "~/.ssh/.env",
+  "log_level": "INFO",
+  "docker_repo_url": "https://download.docker.com/linux/ubuntu",
+  "additional_packages": [
+    "docker-buildx-plugin",
+    "docker-compose-plugin"
+  ]
+}

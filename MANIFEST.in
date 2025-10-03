@@ -1,0 +1,20 @@
+include README.md
+include requirements.txt
+include setup.py
+include pyproject.toml
+include Makefile
+include *.py
+include *.tcss
+include *.json
+include *.sh
+include test_*.py
+recursive-include docker_installer_tui *.py
+recursive-include docker_installer_tui *.tcss
+recursive-include docker_installer_tui *.json
+recursive-include docker_installer_tui *.md
+recursive-include docker_installer_tui *.sh
+recursive-include examples *.py
+recursive-include examples *.json
+recursive-include tests *.py
+recursive-exclude * __pycache__
+recursive-exclude *.pyc
