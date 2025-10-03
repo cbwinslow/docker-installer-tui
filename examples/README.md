@@ -188,4 +188,29 @@ jobs:
         python test_practical.py
 ```
 
+## Octopus Mascot Examples
+
+### Example 16: Using the Octopus Mascot Functions
+```python
+from OctopusMascot import (
+    get_octopus_greeting,
+    get_octopus_fact, 
+    get_octopus_tip,
+    OctopusMascot
+)
+
+# Get random octopus greeting
+print(get_octopus_greeting())
+
+# Get random Docker fact from octopus
+print(get_octopus_fact())
+
+# Get Docker tip from octopus
+print(get_octopus_tip())
+
+# Create and use animated octopus widget
+octopus_widget = OctopusMascot("Welcome to Docker!")
+# The octopus will animate its tentacles and can move around the terminal
+```
+
 These examples demonstrate the various ways to use the Docker Installer TUI in different scenarios.

@@ -69,6 +69,22 @@ The Docker Installer TUI is a complete solution for Docker installation and mana
 - Interactive messages throughout the application
 - Fun ASCII art animations
 
+#### Octopus Mascot Details
+The 8-bit octopus mascot provides an engaging user experience with:
+- **Animated Banner**: Appears on the main screen with moving tentacles
+- **Random Greetings**: Displays different Docker-themed greetings each time
+- **Docker Facts**: Shows interesting facts about Docker and octopuses
+- **Pro Tips**: Provides Docker best practices and advice
+- **Position Animation**: The octopus can move to different positions in the UI
+- **Sidebar Assistant**: Appears in the Docker Hub section with helpful tips
+- **Interactive Messages**: Responds with appropriate messages during operations
+
+The octopus mascot is implemented in the `OctopusMascot.py` module with:
+- `OctopusMascot` class for the animated widget
+- `AnimatedOctopusContainer` for positioning
+- Functions for random greetings, facts, and tips
+- CSS styling in `docker_installer.tcss`
+
 ## Installation
 
 ### Prerequisites
@@ -80,7 +96,7 @@ The Docker Installer TUI is a complete solution for Docker installation and mana
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/docker-installer-tui.git
+git clone https://github.com/cbwinslow/docker-installer-tui.git
 cd docker-installer-tui
 
 # Install dependencies
@@ -88,6 +104,32 @@ pip3 install -r requirements.txt
 
 # Run the TUI
 python3 DockerInstallerTUI.py
+```
+
+### Using the Makefile
+
+The project includes a comprehensive Makefile for building and testing:
+
+```bash
+# Install dependencies
+make install
+
+# Run all tests
+make test
+
+# Run specific test suites
+make test-unit      # Unit tests
+make test-practical # Practical tests
+make test-system    # System tests
+
+# Build distribution packages
+make dist
+
+# Create PyPI packages
+make pip
+
+# Run the application
+make run
 ```
 
 ### Using the Convenience Scripts
@@ -218,6 +260,7 @@ docker-installer-tui/
 ├── test_suite.py              # Unit tests
 ├── test_practical.py          # Practical tests
 ├── test_system.py             # System tests
+├── test_comprehensive.py      # Comprehensive end-to-end tests
 ├── docs/                      # Documentation
 ├── examples/                  # Example configurations
 └── README.md
@@ -250,15 +293,24 @@ python3 test_suite.py
 # Run system integration tests
 python3 test_system.py
 
+# Run comprehensive end-to-end tests
+python3 test_comprehensive.py
+
 # Run all tests
-python3 test_practical.py && python3 test_suite.py && python3 test_system.py
+make test  # This runs all test suites
+
+# Or run all manually:
+python3 test_practical.py && python3 test_suite.py && python3 test_system.py && python3 test_comprehensive.py
 ```
 
 ### Test Coverage
-- Unit tests for all classes and methods
-- Integration tests for API functionality
-- System tests for end-to-end functionality
+- Unit tests for all classes and methods (test_suite.py)
+- Practical tests for system integration (test_practical.py)
+- System tests for end-to-end functionality (test_system.py)
+- Comprehensive end-to-end tests (test_comprehensive.py)
 - Mock-based testing for external dependencies
+- Syntax and import validation
+- Distribution package validation
 
 ### Continuous Integration
 Tests should pass before merging new functionality.
