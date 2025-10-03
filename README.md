@@ -299,6 +299,60 @@ python3 test_suite.py
 python3 DockerInstallerTUI.py
 ```
 
+## GitHub Repository
+
+The project has been published to GitHub at: https://github.com/cbwinslow/docker-installer-tui
+
+To set up the repository locally:
+
+```bash
+git clone https://github.com/cbwinslow/docker-installer-tui.git
+cd docker-installer-tui
+```
+
+## Publishing Guide
+
+This guide explains how to publish the Docker Installer TUI package to PyPI.
+
+### Prerequisites
+
+1. PyPI account with API token
+2. `twine` installed: `pip3 install twine --break-system-packages`
+3. `build` installed: `pip3 install build --break-system-packages`
+
+### Steps to Publish
+
+#### 1. Prepare the Release
+
+```bash
+# Update version in setup.py and pyproject.toml
+# Run all tests
+make test
+
+# Create distribution packages
+make dist
+```
+
+#### 2. Test the Package
+
+```bash
+# Check the package
+python3 -m pip check
+
+# Upload to TestPyPI first
+twine upload --repository testpypi dist/*
+
+# Test installation from TestPyPI
+pip3 install --index-url https://test.pypi.org/simple/ docker-installer-tui
+```
+
+#### 3. Upload to PyPI
+
+```bash
+# Upload to PyPI
+twine upload dist/*
+```
+
 ## License
 
 MIT License
