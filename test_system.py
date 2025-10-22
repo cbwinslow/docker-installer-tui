@@ -47,7 +47,7 @@ def test_install_script():
     # Try to run with --help to verify it works
     try:
         result = subprocess.run(
-            [str(install_script), "--help"],
+            ["bash", str(install_script), "--help"],
             capture_output=True,
             text=True,
             timeout=10
@@ -84,18 +84,22 @@ def test_run_tui_script():
         print(f"✗ Run TUI script is not executable: {run_script}")
         return False
     
-    # Try to run with --help to see if it handles dependencies properly
+    # Try to verify the script can be parsed
     try:
+        # Just verify the script syntax is valid bash
         result = subprocess.run(
-            [str(run_script), "--help"] if run_script.exists() else ["echo", "help"],
+            ["bash", "-n", str(run_script)],
             capture_output=True,
             text=True,
-            timeout=5,
-            # Use echo help to see if script runs without actual TUI launch
+            timeout=5
         )
         
-        print("✓ Run TUI script executes without major errors")
-        return True
+        if result.returncode == 0:
+            print("✓ Run TUI script has valid bash syntax")
+            return True
+        else:
+            print(f"✗ Run TUI script has syntax errors: {result.stderr}")
+            return False
     except Exception as e:
         print(f"✗ Run TUI script error: {e}")
         return False

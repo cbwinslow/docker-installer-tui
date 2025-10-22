@@ -32,10 +32,10 @@ setup(
     description="A Terminal User Interface for Docker installation, management, and exploration",
     long_description=read_long_description(),
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/docker-installer-tui",
+    url="https://github.com/cbwinslow/docker-installer-tui",
     project_urls={
-        "Bug Reports": "https://github.com/yourusername/docker-installer-tui/issues",
-        "Source": "https://github.com/yourusername/docker-installer-tui",
+        "Bug Reports": "https://github.com/cbwinslow/docker-installer-tui/issues",
+        "Source": "https://github.com/cbwinslow/docker-installer-tui",
     },
     classifiers=[
         "Development Status :: 4 - Beta",
