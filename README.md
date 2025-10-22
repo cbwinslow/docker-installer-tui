@@ -296,11 +296,20 @@ python3 test_system.py
 # Run comprehensive end-to-end tests
 python3 test_comprehensive.py
 
-# Run all tests
-make test  # This runs all test suites
+# Run comprehensive installer tests (hardware detection, version compatibility)
+python3 test_installer_comprehensive.py
 
-# Or run all manually:
-python3 test_practical.py && python3 test_suite.py && python3 test_system.py && python3 test_comprehensive.py
+# Run installer integration tests (real system testing)
+python3 test_installer_integration.py
+
+# Run all tests
+make test-all  # This runs all test suites
+
+# Or run specific test categories:
+make test            # Run core tests
+make test-installation
+make test-installer-comprehensive
+make test-installer-integration
 ```
 
 ### Test Coverage
@@ -308,9 +317,33 @@ python3 test_practical.py && python3 test_suite.py && python3 test_system.py && 
 - Practical tests for system integration (test_practical.py)
 - System tests for end-to-end functionality (test_system.py)
 - Comprehensive end-to-end tests (test_comprehensive.py)
+- Comprehensive installer tests (test_installer_comprehensive.py):
+  - Hardware architecture detection (amd64, arm64, armhf, armel)
+  - OS distribution detection (Ubuntu, Debian, etc.)
+  - Configuration management
+  - Installation step verification
+  - Makefile validation
+  - Version compatibility
+- Integration tests (test_installer_integration.py):
+  - Real system hardware detection
+  - Docker availability verification
+  - Configuration file validation
+  - Installation prerequisites
 - Mock-based testing for external dependencies
 - Syntax and import validation
 - Distribution package validation
+
+### Hardware Support
+The installer automatically detects:
+- System architecture (amd64, arm64, armhf, armel)
+- OS distribution and version (Ubuntu, Debian, etc.)
+- Proper Docker repository URLs for your system
+
+Supported architectures:
+- x86_64 / amd64 (Intel/AMD 64-bit)
+- aarch64 / arm64 (ARM 64-bit)
+- armv7l / armhf (ARM 32-bit hard-float)
+- armv6l / armel (ARM 32-bit soft-float)
 
 ### Continuous Integration
 Tests should pass before merging new functionality.
