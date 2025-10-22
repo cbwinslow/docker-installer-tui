@@ -1017,7 +1017,12 @@ class InstallationApp(App):
         self.exit()
 
 
-if __name__ == "__main__":
-    # Run the application
+def main():
+    """Main entry point for the application."""
     app = InstallationApp()
     app.run()
+
+
+if __name__ == "__main__":
+    # Run the application
+    main()
