@@ -141,6 +141,8 @@ class DockerInstaller(IDockerInstaller):
         self.config = config
         self.sudo_password_path = os.path.expanduser(self.config.get_value("password_file_path", "~/.ssh/.env"))
         self.sudo_password = self._read_sudo_password()
+        self.architecture = self._detect_architecture()
+        self.os_info = self._detect_os_info()
         
     def _read_sudo_password(self) -> Optional[str]:
         """Read sudo password from file."""
@@ -154,6 +156,70 @@ class DockerInstaller(IDockerInstaller):
         except Exception as e:
             self.logger.error(f"Error reading password file: {str(e)}")
             return None
+    
+    def _detect_architecture(self) -> str:
+        """Detect system architecture."""
+        try:
+            result = subprocess.run(['dpkg', '--print-architecture'], 
+                                  capture_output=True, text=True, check=True)
+            arch = result.stdout.strip()
+            self.logger.info(f"Detected architecture: {arch}")
+            return arch
+        except (subprocess.CalledProcessError, Exception):
+            # Fallback to uname
+            try:
+                result = subprocess.run(['uname', '-m'], 
+                                      capture_output=True, text=True, check=True)
+                machine = result.stdout.strip()
+                # Map common architectures
+                arch_map = {
+                    'x86_64': 'amd64',
+                    'aarch64': 'arm64',
+                    'armv7l': 'armhf',
+                    'armv6l': 'armel'
+                }
+                arch = arch_map.get(machine, 'amd64')
+                self.logger.info(f"Detected architecture (fallback): {arch}")
+                return arch
+            except Exception as e:
+                self.logger.warning(f"Could not detect architecture: {e}. Defaulting to amd64")
+                return 'amd64'
+    
+    def _detect_os_info(self) -> dict:
+        """Detect OS distribution information."""
+        os_info = {
+            'id': 'ubuntu',
+            'version_id': '20.04',
+            'version_codename': 'focal'
+        }
+        try:
+            # Try to read /etc/os-release
+            if os.path.exists('/etc/os-release'):
+                with open('/etc/os-release', 'r') as f:
+                    for line in f:
+                        if '=' in line:
+                            key, value = line.strip().split('=', 1)
+                            value = value.strip('"')
+                            if key == 'ID':
+                                os_info['id'] = value
+                            elif key == 'VERSION_ID':
+                                os_info['version_id'] = value
+                            elif key == 'VERSION_CODENAME':
+                                os_info['version_codename'] = value
+            
+            # Also get codename from lsb_release as fallback
+            try:
+                result = subprocess.run(['lsb_release', '-cs'], 
+                                      capture_output=True, text=True, check=True)
+                os_info['version_codename'] = result.stdout.strip()
+            except subprocess.CalledProcessError:
+                pass
+            
+            self.logger.info(f"Detected OS: {os_info['id']} {os_info['version_id']} ({os_info['version_codename']})")
+            return os_info
+        except Exception as e:
+            self.logger.warning(f"Could not fully detect OS info: {e}. Using defaults")
+            return os_info
     
     def _run_command(self, cmd: List[str], use_sudo: bool = False) -> bool:
         """Execute a command with optional sudo."""
@@ -219,19 +285,27 @@ class DockerInstaller(IDockerInstaller):
         """Install Docker Engine."""
         self.logger.info("Installing Docker Engine...")
         
+        # Determine base Docker repository URL based on OS
+        os_id = self.os_info.get('id', 'ubuntu')
+        base_url = self.config.get_value("docker_repo_url")
+        if base_url is None:
+            base_url = f"https://download.docker.com/linux/{os_id}"
+        
         # Add Docker's official GPG key
-        docker_repo_url = self.config.get_value("docker_repo_url", "https://download.docker.com/linux/ubuntu")
+        self.logger.info(f"Adding Docker GPG key from {base_url}/gpg")
         if not self._run_command([
-            'curl', '-fsSL', f'{docker_repo_url}/gpg'
+            'curl', '-fsSL', f'{base_url}/gpg'
         ], use_sudo=True):
             self.logger.error("Failed to download Docker GPG key")
             return False
         
-        # Add Docker repository
-        release = subprocess.run(['lsb_release', '-cs'], capture_output=True, text=True).stdout.strip()
+        # Add Docker repository with correct architecture
+        release = self.os_info.get('version_codename', 'focal')
+        repo_line = f'deb [arch={self.architecture}] {base_url} {release} stable'
+        self.logger.info(f"Adding Docker repository: {repo_line}")
         if not self._run_command([
             'add-apt-repository', 
-            f'deb [arch=amd64] {docker_repo_url} {release} stable'
+            repo_line
         ], use_sudo=True):
             self.logger.error("Failed to add Docker repository")
             return False
@@ -241,6 +315,7 @@ class DockerInstaller(IDockerInstaller):
             return False
         
         # Install Docker Engine
+        self.logger.info(f"Installing Docker packages for {self.architecture} architecture")
         if not self._run_command([
             'apt', 'install', '-y', 
             'docker-ce', 

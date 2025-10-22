@@ -21,6 +21,8 @@ help:
 	@echo "  make test-comprehensive Run comprehensive tests"
 	@echo "  make test-tui         Run TUI tests"
 	@echo "  make test-installation Run installation tests"
+	@echo "  make test-installer-comprehensive Run comprehensive installer tests"
+	@echo "  make test-installer-integration Run installer integration tests"
 	@echo "  make validate         Run syntax validation on all Python files"
 	@echo "  make clean            Clean build artifacts"
 	@echo "  make dist             Create distribution package"
@@ -40,7 +42,7 @@ install:
 test: test-unit test-practical test-system
 
 # Run all tests including comprehensive
-test-all: test-unit test-practical test-system test-comprehensive test-tui test-installation
+test-all: test-unit test-practical test-system test-comprehensive test-tui test-installation test-installer-comprehensive test-installer-integration
 	@echo ""
 	@echo "✓ All test suites completed!"
 
@@ -67,6 +69,14 @@ test-tui:
 test-installation:
 	@echo "Running installation tests..."
 	python3 test_installation.py
+
+test-installer-comprehensive:
+	@echo "Running comprehensive installer tests..."
+	python3 test_installer_comprehensive.py
+
+test-installer-integration:
+	@echo "Running installer integration tests..."
+	python3 test_installer_integration.py
 
 # Validate Python syntax
 validate:
