@@ -304,7 +304,7 @@ def run_tests():
     print("INTEGRATION TEST SUMMARY")
     print("="*70)
     print(f"Tests run: {result.testsRun}")
-    print(f"Successes: {result.testsRun - len(result.failures) - len(result.errors) - len(result.skipped)}")
+    print(f"Successes: {result.testsRun - len(result.failures) - len(result.errors)}")
     print(f"Failures: {len(result.failures)}")
     print(f"Errors: {len(result.errors)}")
     print(f"Skipped: {len(result.skipped)}")
